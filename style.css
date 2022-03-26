@@ -1,0 +1,35 @@
+.sudoku {
+    width: 400px;
+    height: 400px;
+    background: #fff;
+    border: 3px solid black;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.sudoku-block {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    border: 2px solid black;
+}
+
+.sudoku-cell {
+    border: 2px solid grey;
+    line-height: 100%;
+    font-family: Verdana, sans-serif;
+    font-size: 16pt;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.sudoku-cell span {
+    vertical-align: middle;
+}
+
+.sudoku-clue {
+    background: #ccc;
+}
+.sudoku-guess {}
+.sudoku-pencilmarks {}
