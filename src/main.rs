@@ -5,44 +5,35 @@ use yew::prelude::*;
 use crate::puzzle::{CellState, Puzzle};
 use pos::GamePos;
 
-enum SudokuMsg {
-    // TODO: How do I bind these to JS events?
-    SetNumber,
-    AddPencilmark,
-}
+// enum SudokuCellMsg {
+//     SetValue(i32),
+//     AddPencilmark,
+// }
 
 #[derive(PartialEq, Properties)]
-struct SudokuSquareProps {
+struct SudokuCellProps {
     state: CellState,
 }
 
-struct SudokuCell {}
+// struct SudokuCell {}
 
-impl Component for SudokuCell {
-    type Message = ();
-    type Properties = SudokuSquareProps;
+#[function_component]
+fn SudokuCell(props: &SudokuCellProps) -> Html {
+    let (class, html) = match props.state {
+        CellState::Clue(v) => ("sudoku-clue", html! { {v} }),
+        CellState::Guess(v) => ("sudoku-guess", html! { {v} }),
+        CellState::Pencilmarks(vs) => ("sudoku-pencilmarks", html! { {"x"} }),
+    };
 
-    fn create(ctx: &Context<Self>) -> Self {
-        Self {}
-    }
+    let final_classes = String::from("sudoku-cell ") + class;
 
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        let (class, html) = match ctx.props().state {
-            CellState::Clue(v) => ("sudoku-clue", html! { {v} }),
-            CellState::Guess(v) => ("sudoku-guess", html! { {v} }),
-            CellState::Pencilmarks(vs) => ("sudoku-pencilmarks", html! { {"x"} }),
-        };
-
-        let final_classes = String::from("sudoku-cell ") + class;
-
-        html! {
+    html! {
             <div class={final_classes}>
                 <span>
                     {html}
                 </span>
             </div>
         }
-    }
 }
 
 struct SudokuBoard {
@@ -50,7 +41,7 @@ struct SudokuBoard {
 }
 
 impl Component for SudokuBoard {
-    type Message = SudokuMsg;
+    type Message = ();
     type Properties = ();
 
     fn create(ctx: &Context<Self>) -> Self {
@@ -79,11 +70,12 @@ impl Component for SudokuBoard {
             (6, 0), (6, 3), (6, 6)
         ];
 
+        let link = ctx.link();
         for (start_row, start_col) in blocks {
             let mut block_elems = vec![];
 
-            for row in start_row ..= start_row+2 {
-                for col in start_col ..= start_col+2 {
+            for row in start_row..=start_row + 2 {
+                for col in start_col..=start_col + 2 {
                     block_elems.push(html!(
                         <SudokuCell state={self.puzzle.state_at(&GamePos::at(row, col))} />
                     ));
@@ -108,5 +100,5 @@ impl Component for SudokuBoard {
 }
 
 fn main() {
-    yew::start_app::<SudokuBoard>();
+    yew::Renderer::<SudokuBoard>::new().render();
 }
