@@ -112,7 +112,7 @@ impl Puzzle {
 
                 candidates[candidate - 1] = !current_value;
             }
-            CellState::Guess(_) => panic!("Should not be a Guess after attemping to set pencilmarks.")
+            CellState::Guess(_) => panic!("Should not be a Guess after attempting to set pencilmarks.")
         }
     }
 
