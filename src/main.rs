@@ -1,5 +1,6 @@
 use std::rc::Rc;
 
+use log::{log, Level};
 use yew::prelude::*;
 
 use pos::GamePos;
@@ -19,6 +20,7 @@ enum GameAction {
     SetActiveCell(GamePos),
     GuessInput(u8),
     PencilmarkInput(u8),
+    DeleteCell,
 }
 
 impl Reducible for GameState {
@@ -40,6 +42,10 @@ impl Reducible for GameState {
                 if let Some(pos) = state.active_cell {
                     state.puzzle.toggle_candidate(&pos, val as usize);
                 },
+            GameAction::DeleteCell =>
+                if let Some(pos) = state.active_cell {
+                    state.puzzle.clear(&pos)
+                },
         }
 
         state.into()
@@ -51,11 +57,13 @@ struct SudokuCellProps {
     onclick: Callback<MouseEvent>,
     cell_state: CellState,
     is_active: bool,
+    is_error: bool,
 }
 
 #[function_component(SudokuCell)]
 fn sudoku_cell(props: &SudokuCellProps) -> Html {
     let active_class = props.is_active.then(|| "active-sudoku-cell");
+    let error_class = props.is_error.then(|| "sudoku-cell-error");
 
     match props.cell_state {
         CellState::Clue(v) =>
@@ -66,7 +74,7 @@ fn sudoku_cell(props: &SudokuCellProps) -> Html {
             },
         CellState::Guess(v) =>
             html! {
-                <div class={classes!("sudoku-cell", "sudoku-guess", active_class)} onclick={props.onclick.clone()}>
+                <div class={classes!("sudoku-cell", "sudoku-guess", error_class, active_class)} onclick={props.onclick.clone()}>
                     <span>{v}</span>
                 </div>
             },
@@ -140,6 +148,7 @@ fn sudoku_board() -> Html {
                     <SudokuCell
                         onclick={onclick}
                         cell_state={gamestate.puzzle.state_at(&here)}
+                        is_error={gamestate.puzzle.is_error(here)}
                         is_active={gamestate.active_cell == Some(here)} />
                 ));
             }
@@ -154,31 +163,27 @@ fn sudoku_board() -> Html {
         ));
     }
 
-    let onkeypress = Callback::from(move |e: KeyboardEvent| {
+    let onkeydown = Callback::from(move |e: KeyboardEvent| {
         let mut state = gamestate.clone();
 
-        if let Some(c) = char::from_u32(e.char_code()) {
-            match c {
-                '1' ..= '9' => state.dispatch(GameAction::GuessInput(c as u8 - '0' as u8)),
+        match e.key_code() {
+            // 1 .. 9
+            48 ..= 57 =>
+                if e.shift_key() {
+                    state.dispatch(GameAction::PencilmarkInput(e.key_code() as u8 - 48));
+                } else {
+                    state.dispatch(GameAction::GuessInput(e.key_code() as u8 - 48));
+                },
 
-                // TODO: Assumes US keyboard layout!
-                '!' => state.dispatch(GameAction::PencilmarkInput(1)),
-                '@' => state.dispatch(GameAction::PencilmarkInput(2)),
-                '#' => state.dispatch(GameAction::PencilmarkInput(3)),
-                '$' => state.dispatch(GameAction::PencilmarkInput(4)),
-                '%' => state.dispatch(GameAction::PencilmarkInput(5)),
-                '^' => state.dispatch(GameAction::PencilmarkInput(6)),
-                '&' => state.dispatch(GameAction::PencilmarkInput(7)),
-                '*' => state.dispatch(GameAction::PencilmarkInput(8)),
-                '(' => state.dispatch(GameAction::PencilmarkInput(9)),
+            // Backspace
+            8 => state.dispatch(GameAction::DeleteCell),
 
-                _ => {}
-            }
+            _ => {},
         }
     });
 
-    html! {
-        <div class="sudoku" tabindex="0" onkeypress={onkeypress}>
+html! {
+        <div class="sudoku" tabindex="0" onkeydown={onkeydown}>
             {elems}
         </div>
     }
@@ -186,5 +191,8 @@ fn sudoku_board() -> Html {
 
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());
-    yew::start_app::<SudokuBoard>();
+    let document = gloo_utils::document();
+    let root = document.get_element_by_id("yewstartshere").expect("could not find mount point!");
+    yew::start_app_in_element::<SudokuBoard>(root);
+    // yew::start_app::<SudokuBoard>();
 }

@@ -3,9 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Sadoku</title>
-    <link data-trunk rel="css" href="style.css" />
+    <link data-trunk rel="css" href="style.css"/>
 </head>
 <body>
-<h1>Wat</h1>
+<div id="yewstartshere"></div>
+<div id="overview">
+    <h1>Sudoku WebAssembly & Rust Demo</h1>
+
+    <p>
+        This demo application shows a Rust library powering a Sudoku game using <a href="https://yew.rs">Yew</a> and <a
+            href="https://webassembly.org/"/>WebAssembly</a>.
+    </p>
+
+    <p>
+        To play, select empty cells with your mouse and use the following keys:
+    <ul>
+        <li><kbd>1</kbd> - <kbd>9</kbd>: Enter a "Guess" into the field.</li>
+        <li><kbd>SHIFT</kbd> + <kbd>1</kbd> - <kbd>9</kbd>: Enter some "Pencilmarks" into the field.</li>
+        <li><kbd>BACKSPACE</kbd>: Clear the field.</li>
+    </ul>
+    </p>
+
+    <p>Errors will be highlighted, but no message will be displayed when you complete the puzzle! The puzzle is
+        currently hardcoded.</p>
+</div>
 </body>
 </html>

@@ -6,6 +6,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
+    margin-right: 30px;
 }
 
 .sudoku-block {
@@ -16,26 +17,27 @@
 }
 
 .sudoku-cell {
+    display:flex;
+    justify-content:center;
+    align-items:center;
     border: 2px solid grey;
     line-height: 100%;
-    font-family: Verdana, sans-serif;
-    font-size: 16pt;
-    text-align: center;
-    vertical-align: middle;
+}
+.sudoku-cell > span {
+    font-size: 36px;
 }
 
 .active-sudoku-cell {
     background: #ffe97b;
 }
 
-.sudoku-cell span {
-    vertical-align: middle;
+.sudoku-cell-error {
+    border-color: red;
 }
-
 .sudoku-clue {
     background: #ccc;
 }
-.sudoku-guess {}
+
 .sudoku-pencilmarks {}
 .sudoku-pencilmarks > ul {
     padding: 0;
@@ -47,5 +49,15 @@
     grid-template-rows: repeat(3, 1fr);
 }
 .sudoku-pencilmarks > ul > li {
-    display: inline;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    font-size: 16px;
+}
+
+body {
+    display: grid;
+    grid-template-columns: 810px 1fr;
+    background: #c3dff6;
+    font-family: Verdana, sans-serif;
 }
