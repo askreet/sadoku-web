@@ -26,6 +26,7 @@
 }
 .sudoku-cell > span {
     font-size: 36px;
+    user-select: none;
 }
 
 .active-sudoku-cell {
@@ -54,6 +55,7 @@
     justify-content:center;
     align-items:center;
     font-size: 16px;
+    user-select: none;
 }
 
 body {
