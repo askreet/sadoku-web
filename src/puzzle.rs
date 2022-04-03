@@ -23,7 +23,7 @@ impl CellState {
             CellState::Pencilmarks(_) => return false,
         };
 
-        return my_value == their_value;
+        my_value == their_value
     }
 }
 
@@ -80,7 +80,7 @@ impl Puzzle {
     }
 
     pub fn iter_cells(&self) -> CellIter {
-        CellIter { puzzle: &self, index: 0 }
+        CellIter { puzzle: self, index: 0 }
     }
 
     pub fn clear(&mut self, pos: &GamePos) {

@@ -18,29 +18,29 @@ impl GamePos {
     }
 
     pub fn iter_right(&self) -> impl Iterator<Item=GamePos> {
-        GamePosIter { pos: self.clone(), kind: Row, inc: true, skip: None }
+        GamePosIter { pos: *self, kind: Row, inc: true, skip: None }
     }
 
     pub fn iter_left(&self) -> impl Iterator<Item=GamePos> {
-        GamePosIter { pos: self.clone(), kind: Row, inc: false, skip: None }
+        GamePosIter { pos: *self, kind: Row, inc: false, skip: None }
     }
 
     pub fn iter_up(&self) -> impl Iterator<Item=GamePos> {
-        GamePosIter { pos: self.clone(), kind: Col, inc: false, skip: None }
+        GamePosIter { pos: *self, kind: Col, inc: false, skip: None }
     }
 
     pub fn iter_down(&self) -> impl Iterator<Item=GamePos> {
-        GamePosIter { pos: self.clone(), kind: Col, inc: true, skip: None }
+        GamePosIter { pos: *self, kind: Col, inc: true, skip: None }
     }
 
     pub fn iter_others_in_col(&self) -> impl Iterator<Item=GamePos> {
         // TODO: Starting at -1 is a hack.
-        GamePosIter { pos: GamePos { col: self.col, row: -1 }, kind: Col, inc: true, skip: Some(self.clone()) }
+        GamePosIter { pos: GamePos { col: self.col, row: -1 }, kind: Col, inc: true, skip: Some(*self) }
     }
 
     pub fn iter_others_in_row(&self) -> impl Iterator<Item=GamePos> {
         // TODO: Starting at -1 is a hack.
-        GamePosIter { pos: GamePos { col: -1, row: self.row }, kind: Row, inc: true, skip: Some(self.clone()) }
+        GamePosIter { pos: GamePos { col: -1, row: self.row }, kind: Row, inc: true, skip: Some(*self) }
     }
 
     // pub fn iter_others_in_block(&self) -> impl Iterator<Item=GamePos> {
@@ -48,8 +48,8 @@ impl GamePos {
     // }
 
     pub fn conflict_candidates(&self) -> impl Iterator<Item=GamePos> {
-        return self.iter_others_in_col()
-            .chain(self.iter_others_in_row());
+        self.iter_others_in_col()
+            .chain(self.iter_others_in_row())
     }
 }
 
@@ -106,7 +106,7 @@ impl Iterator for BlockIter {
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.next == 8 {
-            return None;
+            None
         } else {
             let d_row = self.next / 3;
             let d_col = self.next % 3;
@@ -127,7 +127,7 @@ impl Iterator for GamePosIter {
         let end = if self.inc { 8 } else { 0 };
 
         match &self.kind {
-            Row => return if self.pos.col == end {
+            Row => if self.pos.col == end {
                 None
             } else {
                 self.pos.col += self.step();
@@ -137,7 +137,7 @@ impl Iterator for GamePosIter {
                     Some(self.pos)
                 }
             },
-            Col => return if self.pos.row == end {
+            Col => if self.pos.row == end {
                 None
             } else {
                 self.pos.row += self.step();
@@ -206,11 +206,11 @@ mod tests {
 
     #[test]
     fn test_block_id_of_pos() {
-        let start = GamePos { row: 1, col: 2 };
+        let _start = GamePos { row: 1, col: 2 };
 
         let actual: Vec<u8> = pos_grid()
             .iter()
-            .map(|p| BlockId::of_pos(&p).0)
+            .map(|p| BlockId::of_pos(p).0)
             .collect();
 
         assert_eq!(
@@ -270,6 +270,6 @@ mod tests {
                 vec.push(GamePos { row, col })
             }
         }
-        return vec;
+        vec
     }
 }

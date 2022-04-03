@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use log::{log, Level};
+
 use yew::prelude::*;
 
 use pos::GamePos;
@@ -154,7 +154,7 @@ fn sudoku_board() -> Html {
             }
         }
 
-        assert!(block_elems.len() > 0);
+        assert!(!block_elems.is_empty());
 
         elems.push(html!(
             <div class="sudoku-block">
@@ -164,7 +164,7 @@ fn sudoku_board() -> Html {
     }
 
     let onkeydown = Callback::from(move |e: KeyboardEvent| {
-        let mut state = gamestate.clone();
+        let state = gamestate.clone();
 
         match e.key_code() {
             // 1 .. 9
