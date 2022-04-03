@@ -175,6 +175,14 @@ fn sudoku_board() -> Html {
                     state.dispatch(GameAction::GuessInput(e.key_code() as u8 - 48));
                 },
 
+            // numpad 1 .. 9
+            97 ..= 105 =>
+                if e.shift_key() {
+                    state.dispatch(GameAction::PencilmarkInput(e.key_code() as u8 - 97));
+                } else {
+                    state.dispatch(GameAction::GuessInput(e.key_code() as u8 - 97));
+                },
+
             // Backspace
             8 => state.dispatch(GameAction::DeleteCell),
 
